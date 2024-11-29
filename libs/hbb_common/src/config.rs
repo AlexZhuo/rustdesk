@@ -1081,15 +1081,37 @@ impl Config {
     }
 
     pub fn get_network_type() -> NetworkType {
-        if OVERWRITE_SETTINGS
+		println!("运行  get_network_type");
+		//OVERWRITE_SETTINGS
+        //    .write()
+        //    .unwrap()
+        //    .insert(keys::OPTION_PROXY_URL.to_string(), "192.168.1.1:1080".to_string());
+        //println!("OPTION_PROXY_URL 已经写死");
+		
+		OVERWRITE_SETTINGS
+            .write()
+            .unwrap()
+            .insert(keys::OPTION_ACCESS_MODE.to_string(), "full".to_string());
+		OVERWRITE_SETTINGS
+            .write()
+            .unwrap()
+            .insert(keys::OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION.to_string(), "Y".to_string());
+			
+		println!("OPTION_ACCESS_MODE和OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION已经full！！！！");
+		
+		if OVERWRITE_SETTINGS
             .read()
             .unwrap()
             .get(keys::OPTION_PROXY_URL)
             .is_some()
         {
+			println!("网络类型是：OVERWRITE_SETTINGS  NetworkType::ProxySocks");
+			println!("OVERWRITE_SETTINGS:OPTION_PROXY_URL == {:?}", OVERWRITE_SETTINGS.read().unwrap().get(keys::OPTION_PROXY_URL));
             return NetworkType::ProxySocks;
         }
         if CONFIG2.read().unwrap().socks.is_some() {
+			println!("网络类型是：CONFIG2  NetworkType::ProxySocks"); //在图形界面中配置的socks5代理
+			println!("CONFIG2.read().unwrap().socks.is_some() == {:?}",CONFIG2.read().unwrap().socks); //Some(Socks5Server { proxy: "192.166.1.21:58080", username: "", password: "" })
             return NetworkType::ProxySocks;
         }
         if DEFAULT_SETTINGS
@@ -1098,8 +1120,10 @@ impl Config {
             .get(keys::OPTION_PROXY_URL)
             .is_some()
         {
+			println!("网络类型是：DEFAULT_SETTINGS  NetworkType::ProxySocks");
             return NetworkType::ProxySocks;
         }
+		println!("网络类型是：NetworkType::Direct");
         NetworkType::Direct
     }
 
